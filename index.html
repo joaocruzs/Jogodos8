@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo dos 8</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Jogo dos 8</h1>
+
+        <div class="grid" id="tabuleiro">
+            <!-- 9 inputs para o tabuleiro -->
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+        </div>
+
+        <div class="algoritmos">
+            <label><input type="checkbox" value="largura"> Busca em Largura</label>
+            <label><input type="checkbox" value="profundidade"> Busca em Profundidade</label>
+            <label><input type="checkbox" value="a_estrela"> A*</label>
+        </div>
+
+        <button onclick="resolver()">Resolver</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
