@@ -42,4 +42,53 @@ async function resolver() {
         resposta.textContent = 'Erro ao resolver o jogo.';
         console.error(error);
     }
+    resposta.textContent = resultado.mensagem;
+
+    if (resultado.passos) {
+    criarAnimacao(resultado.passos[0], resultado.passos); 
 }
+
+}
+
+function criarAnimacao(tabuleiroInicial, passos) {
+    const grid = document.getElementById('tabuleiro');
+    grid.innerHTML = ''; // limpa a grade
+    grid.style.position = 'relative';
+    grid.style.width = '200px';
+    grid.style.height = '200px';
+
+    const blocos = {};
+
+    for (let i = 0; i < 9; i++) {
+        const valor = tabuleiroInicial[i];
+        const bloco = document.createElement('div');
+        bloco.className = 'tile';
+        bloco.textContent = valor !== '0' ? valor : '';
+        if (valor === '0') bloco.classList.add('zero');
+        grid.appendChild(bloco);
+        blocos[valor] = bloco;
+        moverBloco(bloco, i);
+    }
+
+    let i = 0;
+    function animarPasso() {
+        if (i >= passos.length) return;
+        const estado = passos[i];
+        for (let j = 0; j < 9; j++) {
+            const valor = estado[j];
+            const bloco = blocos[valor];
+            moverBloco(bloco, j);
+        }
+        i++;
+        setTimeout(animarPasso, 500); // tempo entre passos
+    }
+
+    animarPasso();
+}
+
+function moverBloco(bloco, pos) {
+    const x = pos % 3;
+    const y = Math.floor(pos / 3);
+    bloco.style.transform = `translate(${x * 70}px, ${y * 70}px)`;
+}
+
