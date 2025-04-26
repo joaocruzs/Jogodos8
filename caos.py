@@ -96,78 +96,95 @@ class JogoDos8App:
 
     
     def animar_solucao(self, solucao, resultado, metodo):
+        # Parâmetros da animação
+        TILE_SIZE  = 100
+        ANIM_STEPS = 10
+        ANIM_DELAY = 30  # ms entre passos
+
         janela = tk.Toplevel(self.root)
         janela.title(f"Resolução - {metodo}")
 
         label_metodo = tk.Label(janela, text=f"Método: {metodo}", font=("Arial", 14, "bold"))
         label_metodo.pack(pady=10)
 
-        cell_size = 120
-        canvas = tk.Canvas(janela, width=3*cell_size, height=3*cell_size)
+        canvas = tk.Canvas(janela, width=3*TILE_SIZE, height=3*TILE_SIZE, bg='white')
         canvas.pack()
 
-        # Desenha o estado inicial
-        items = {}  # Mapear valor da peça para (id do retângulo, id do texto)
-        estado_inicial = solucao[0] if solucao else resultado.get("estado_inicial", tuple(range(9)))
-        for i, v in enumerate(estado_inicial):
-            if v == 0:
-                continue
-            r, c = divmod(i, 3)
-            x, y = c * cell_size, r * cell_size
-            rect = canvas.create_rectangle(x, y, x + cell_size, y + cell_size, fill="lightblue", outline="black")
-            txt = canvas.create_text(x + cell_size/2, y + cell_size/2, text=str(v), font=("Arial", 24))
-            items[v] = (rect, txt)
+        # Cria uma lista de posições para cada estado da solução
+        positions = []
+        for state in solucao:
+            pos = {val: (i // 3, i % 3) for i, val in enumerate(state)}
+            positions.append(pos)
 
-        def mover(v, dr, dc, passo=0, callback=None):
-            # Incrementa a animação em 10 passos
-            if passo < 10:
-                dx = (dc * cell_size) / 10
-                dy = (dr * cell_size) / 10
-                rect, txt = items[v]
-                canvas.move(rect, dx, dy)
-                canvas.move(txt, dx, dy)
-                janela.after(50, mover, v, dr, dc, passo + 1, callback)
-            else:
-                if callback:
-                    callback()
+        # Cria os "tiles" para cada peça (0 representa o espaço vazio)
+        tiles = {}
+        for num in range(9):
+            cor = 'lightgray' if num == 0 else 'lightblue'
+            rect = canvas.create_rectangle(0, 0, 0, 0, fill=cor, outline='black')
+            txt = canvas.create_text(0, 0, text=("" if num == 0 else str(num)), font=('Arial', 24))
+            tiles[num] = (rect, txt)
 
-        def avancar(i=0):
-            if i >= len(solucao) - 1:
-                mostrar_dados()
+        def update_tiles(pos):
+            # Atualiza as coordenadas dos tiles baseado no estado pos
+            for num, (i, j) in pos.items():
+                x0 = j * TILE_SIZE
+                y0 = i * TILE_SIZE
+                x1 = x0 + TILE_SIZE
+                y1 = y0 + TILE_SIZE
+                rect, txt = tiles[num]
+                canvas.coords(rect, x0, y0, x1, y1)
+                canvas.coords(txt, x0 + TILE_SIZE//2, y0 + TILE_SIZE//2)
+
+        # Posiciona os tiles conforme o estado inicial e força atualizar a janela
+        update_tiles(positions[0])
+        janela.update()  # Força o redraw antes de iniciar a animação
+        self.step = 0  # controla o índice do passo da animação
+
+        def animate_step():
+            if self.step + 1 >= len(positions):
+                # Ao final, exibe as métricas da solução
+                infos = (
+                    f"Nós gerados: {resultado['nos_gerados']}\n"
+                    f"Nós na fronteira: {resultado['nos_fronteira']}\n"
+                    f"Profundidade da solução: {resultado['profundidade_solucao']}\n"
+                    f"Profundidade máxima: {resultado['profundidade_max']}\n"
+                    f"Completo: {resultado['completo']}\n"
+                    f"Ótimo: {resultado['otimo']}\n"
+                    f"Admissível: {resultado['admissivel']}"
+                )
+                tk.Label(janela, text=infos, justify="left").pack(pady=10)
+                tk.Button(janela, text="Próximo", command=lambda: [janela.destroy(), self.mostrar_proximo_resultado()]).pack(pady=10)
                 return
 
-            estado_atual = solucao[i]
-            estado_prox = solucao[i + 1]
-            # Detecta a peça que se moveu: onde o valor na próxima configuração foi substituído pelo zero
-            for pos, (atual, prox) in enumerate(zip(estado_atual, estado_prox)):
-                if atual != prox and estado_prox[pos] == 0:
-                    peca = atual
+            cur = positions[self.step]
+            nxt = positions[self.step + 1]
+
+            # Identifica a posição que mudou
+            for num in range(1, 9):
+                if cur[num] != nxt[num]:
+                    moving = num
                     break
 
-            pos_antiga = estado_atual.index(peca)
-            pos_nova = estado_prox.index(peca)
-            dr = (pos_nova // 3) - (pos_antiga // 3)
-            dc = (pos_nova % 3) - (pos_antiga % 3)
-            mover(peca, dr, dc, 0, lambda: avancar(i + 1))
+            si, sj = cur[moving]
+            ti, tj = nxt[moving]
+            dx = (tj - sj) * TILE_SIZE / ANIM_STEPS
+            dy = (ti - si) * TILE_SIZE / ANIM_STEPS
 
-        def mostrar_dados():
-            infos = (
-                f"Nós gerados: {resultado['nos_gerados']}\n"
-                f"Nós na fronteira: {resultado['nos_fronteira']}\n"
-                f"Profundidade da solução: {resultado['profundidade_solucao']}\n"
-                f"Profundidade máxima: {resultado['profundidade_max']}\n"
-                f"Completo: {resultado['completo']}\n"
-                f"Ótimo: {resultado['otimo']}\n"
-                f"Admissível: {resultado['admissivel']}"
-            )
-            tk.Label(janela, text=infos, justify="left").pack(pady=10)
-            tk.Button(janela, text="Próximo", command=lambda: [janela.destroy(), self.mostrar_proximo_resultado()]).pack(pady=10)
+            def slide(count=0):
+                rect, txt = tiles[moving]
+                canvas.move(rect, dx, dy)
+                canvas.move(txt, dx, dy)
+                if count + 1 < ANIM_STEPS:
+                    janela.after(ANIM_DELAY, slide, count + 1)
+                else:
+                    update_tiles(nxt)
+                    self.step += 1
+                    janela.after(200, animate_step)
 
-        if solucao:
-            avancar(0)
-        else:
-            tk.Label(janela, text="Solução não encontrada!", fg="red").pack(pady=10)
-            mostrar_dados()
+            slide()
+
+        # Inicia a animação com um pequeno atraso
+        janela.after(500, animate_step)
 
     def exibir_metrica(self, resultado):
         met_win = tk.Toplevel(self.root)
