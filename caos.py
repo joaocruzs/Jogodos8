@@ -116,7 +116,7 @@ class JogoDos8App:
             pos = {val: (i // 3, i % 3) for i, val in enumerate(state)}
             positions.append(pos)
 
-        # Cria os "tiles" para cada peça (0 representa o espaço vazio)
+        # Cria os "tiles" para cada peça
         tiles = {}
         for num in range(9):
             cor = 'lightgray' if num == 0 else 'lightblue'
@@ -125,7 +125,6 @@ class JogoDos8App:
             tiles[num] = (rect, txt)
 
         def update_tiles(pos):
-            # Atualiza as coordenadas dos tiles baseado no estado pos
             for num, (i, j) in pos.items():
                 x0 = j * TILE_SIZE
                 y0 = i * TILE_SIZE
@@ -135,14 +134,13 @@ class JogoDos8App:
                 canvas.coords(rect, x0, y0, x1, y1)
                 canvas.coords(txt, x0 + TILE_SIZE//2, y0 + TILE_SIZE//2)
 
-        # Posiciona os tiles conforme o estado inicial e força atualizar a janela
         update_tiles(positions[0])
-        janela.update()  # Força o redraw antes de iniciar a animação
-        self.step = 0  # controla o índice do passo da animação
+        janela.update()  # Força o redraw inicial
+        self.step = 0
 
         def animate_step():
             if self.step + 1 >= len(positions):
-                # Ao final, exibe as métricas da solução
+                # Exibe as métricas no fim da animação
                 infos = (
                     f"Nós gerados: {resultado['nos_gerados']}\n"
                     f"Nós na fronteira: {resultado['nos_fronteira']}\n"
@@ -159,14 +157,14 @@ class JogoDos8App:
             cur = positions[self.step]
             nxt = positions[self.step + 1]
 
-            # Identifica a posição que mudou
-            for num in range(1, 9):
-                if cur[num] != nxt[num]:
-                    moving = num
-                    break
+            # Identifica a posição vazia no estado atual (chave 0)
+            zi, zj = cur[0]
 
-            si, sj = cur[moving]
-            ti, tj = nxt[moving]
+            # Encontra a peça que moverá para a posição do 0
+            moving = next(num for num, (ni, nj) in nxt.items() if num != 0 and (ni, nj) == (zi, zj))
+            si, sj = cur[moving]     # posição atual da peça
+            ti, tj = cur[0]          # destino: onde estava o 0 no estado atual
+
             dx = (tj - sj) * TILE_SIZE / ANIM_STEPS
             dy = (ti - si) * TILE_SIZE / ANIM_STEPS
 
@@ -177,13 +175,12 @@ class JogoDos8App:
                 if count + 1 < ANIM_STEPS:
                     janela.after(ANIM_DELAY, slide, count + 1)
                 else:
-                    update_tiles(nxt)
+                    # Não chamamos update_tiles aqui para não resetar a animação
                     self.step += 1
                     janela.after(200, animate_step)
 
             slide()
 
-        # Inicia a animação com um pequeno atraso
         janela.after(500, animate_step)
 
     def exibir_metrica(self, resultado):
