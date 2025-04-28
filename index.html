@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <title>8-Puzzle Solver</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="8.png">
+    
 </head>
 <body>
     <div class="container">
-        <div class="entrada">
+        <div class="entrada" id="coluna-esquerda">
             <h2>Tabuleiro Inicial</h2>
             <div id="tabuleiro-inicial" class="tabuleiro">
                 <!-- 9 inputs -->
@@ -53,7 +55,7 @@
             
         </div>
 
-        <div class="solucao">
+        <div class="solucao" id="coluna-meio">
             <h2 id="nome-solucao">Solução</h2>
             <div id="saida" class="tabuleiro-solucao"></div>
 
@@ -67,7 +69,7 @@
             </div>
         </div>
 
-        <div class="resultados">
+        <div class="resultados" id="coluna-direita">
             <h2>Resultados</h2>
             <div id="resultados"></div>
         </div>
