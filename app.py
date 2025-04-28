@@ -29,16 +29,24 @@ def resolver():
             resposta['A*'] = resultado
 
     return jsonify({
-        'mensagem': formatar_resultado(resposta)
+        'resposta': resposta  
     })
+
 
 def formatar_resultado(resposta):
     linhas = []
     for metodo, dados in resposta.items():
         linhas.append(f"\n=== Método: {metodo.upper()} ===")
+        
+        if 'solucao' in dados:
+            linhas.append(f"Solução: {dados['solucao']}")
+        
         for chave, valor in dados.items():
-            linhas.append(f"{chave}: {valor}")
+            if chave != 'solucao':
+                linhas.append(f"{chave}: {valor}")
+    
     return "\n".join(linhas)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
