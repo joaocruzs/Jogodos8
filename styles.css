@@ -1,73 +1,115 @@
-/* styles.css */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
 }
 
 .container {
-    background: white;
-    padding: 20px 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
+  display: flex;
+  height: 100vh;
 }
 
-h1 {
-    margin-bottom: 20px;
+.entrada, .solucao, .resultados {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 60px);
-    grid-gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
+.entrada {
+  background-color: #ececec;
+  border-right: 2px solid #ccc;
 }
 
-.grid input {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-    text-align: center;
-    border: 2px solid #ccc;
-    border-radius: 8px;
+.solucao {
+  background-color: #fff;
+  border-right: 2px solid #ccc;
 }
 
-.algoritmos {
-    margin-bottom: 20px;
-    text-align: left;
+.resultados {
+  background-color: #f0f0f0;
 }
 
-.algoritmos label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
+.tabuleiro {
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.tabuleiro input {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.tabuleiro-solucao {
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.tabuleiro-solucao div {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.botoes {
+  margin-top: 20px;
+  text-align: center;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-button:hover {
-    background-color: #0056b3;
+.mudando {
+  background-color: yellow !important;
+  transition: background-color 0.5s;
 }
 
-#resultado {
-    margin-top: 20px;
-    font-size: 14px;
-    text-align: left;
-    white-space: pre-wrap;
+.algoritmos-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.algoritmos-opcoes label {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.movimentos-box {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.movimentos-box h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+#movimentos-numero {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
 }
