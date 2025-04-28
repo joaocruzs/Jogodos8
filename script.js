@@ -1,45 +1,160 @@
-// script.js
+let resultados = {};
+let metodos = [];
+let indiceMetodo = 0;
+let indiceEstado = 0;
+let caminhoAtual = [];
 
-async function resolver() {
-    const inputs = document.querySelectorAll('#tabuleiro input');
-    const values = Array.from(inputs).map(input => input.value === '' ? '0' : input.value);
+const proximoBtn = document.getElementById('proximo-btn');
+proximoBtn.disabled = true;
 
-    // Verifica se todos os números de 0 a 8 estão presentes
-    const numeros = new Set(values);
-    const esperado = new Set(['0','1','2','3','4','5','6','7','8']);
-    if (numeros.size !== 9 || ![...esperado].every(n => numeros.has(n))) {
-        alert('Por favor, insira todos os números de 0 a 8 (sem repetir).');
-        return;
-    }
+document.getElementById('resolver-btn').addEventListener('click', enviarDados);
+proximoBtn.addEventListener('click', proximoEstado);
+document.getElementById('resetar-btn').addEventListener('click', resetar);
 
-    const algoritmosSelecionados = Array.from(document.querySelectorAll('.algoritmos input:checked')).map(cb => cb.value);
+// Função para lidar com "Selecionar Todos"
+document.getElementById('selecionar-todos').addEventListener('change', function () {
+    const todos = this.checked;
+    document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
+        if (input.id !== 'selecionar-todos') {
+            input.checked = todos;
+        }
+    });
+});
 
-    if (algoritmosSelecionados.length === 0) {
-        alert('Por favor, selecione ao menos um método de resolução.');
-        return;
-    }
-
-    const resposta = document.getElementById('resultado');
-    resposta.textContent = 'Resolvendo...';
-
-    try {
-        const response = await fetch('/resolver', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tabuleiro: values,
-                algoritmos: algoritmosSelecionados
-            })
+// Se clicar em qualquer outro checkbox, desmarca "Selecionar Todos"
+document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
+    if (input.id !== 'selecionar-todos') {
+        input.addEventListener('change', function () {
+            if (!this.checked) {
+                document.getElementById('selecionar-todos').checked = false;
+            }
         });
+    }
+});
 
-        const resultado = await response.json();
-        resposta.textContent = resultado.mensagem;
-        // Aqui você pode chamar uma função para animar os passos
+function resetar() {
+    // Limpar o tabuleiro inicial
+    document.querySelectorAll('#tabuleiro-inicial input').forEach(input => {
+        input.value = '';
+    });
 
-    } catch (error) {
-        resposta.textContent = 'Erro ao resolver o jogo.';
-        console.error(error);
+    // Desmarcar todos os algoritmos selecionados
+    document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
+        input.checked = false;
+    });
+
+    // Limpar área de saída e resultados
+    document.getElementById('saida').innerHTML = '';
+    document.getElementById('resultados').innerHTML = '';
+    document.getElementById('nome-solucao').textContent = '';
+
+    // Zerar contador de movimentos
+    document.getElementById('movimentos-numero').textContent = '0';
+
+    // Esconder botão de próximo
+    proximoBtn.style.visibility = 'hidden';
+    proximoBtn.disabled = true;
+}
+
+function enviarDados() {
+    document.getElementById('resultados').innerHTML = '';
+    document.getElementById('movimentos-numero').textContent = '0';
+
+    const tabuleiro = [];
+    document.querySelectorAll('#tabuleiro-inicial input').forEach(input => {
+        const valor = input.value.trim();
+        tabuleiro.push(valor === '' ? 0 : parseInt(valor));
+    });
+
+    const algoritmos = [];
+    document.querySelectorAll('input[name="algoritmo"]:checked').forEach(input => {
+        algoritmos.push(input.value);
+    });
+
+    if (tabuleiro.length !== 9 || algoritmos.length === 0) {
+        alert("Preencha corretamente o tabuleiro e selecione pelo menos um algoritmo!");
+        return;
+    }
+
+    fetch('/resolver', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ tabuleiro, algoritmos })
+    })
+    .then(response => response.json())
+    .then(data => {
+        resultados = data;
+        metodos = Object.keys(resultados);
+        indiceMetodo = 0;
+        indiceEstado = 0;
+        caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
+
+        document.getElementById('saida').innerHTML = '';
+        document.getElementById('nome-solucao').textContent = '';
+        
+        mostrarEstado();
+        proximoBtn.style.visibility = 'visible';
+        proximoBtn.disabled = false;
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
+}
+
+function mostrarEstado() {
+    const metodo = metodos[indiceMetodo];
+    const estado = caminhoAtual[indiceEstado];
+
+    document.getElementById('nome-solucao').textContent = `Método: ${metodo.toUpperCase()}`;
+
+    const saida = document.getElementById('saida');
+    saida.innerHTML = estado.map(valor => `
+        <div>${valor === 0 ? '' : valor}</div>
+    `).join('');
+}
+
+function proximoEstado() {
+    indiceEstado++;
+    if (indiceEstado < caminhoAtual.length) {
+        mostrarEstado();
+        atualizarContador();
+    } else {
+        mostrarResultados();
+    }
+}
+
+function atualizarContador() {
+    let movimentos = parseInt(document.getElementById('movimentos-numero').textContent);
+    movimentos++;
+    document.getElementById('movimentos-numero').textContent = movimentos;
+}
+
+function mostrarResultados() {
+    const metodo = metodos[indiceMetodo];
+    const dados = resultados[metodo];
+
+    const resultadosDiv = document.getElementById('resultados');
+    resultadosDiv.innerHTML += `
+        <div class="movimento">
+            <h3>Resultados para ${metodo.toUpperCase()}:</h3>
+            <p>Nós gerados: ${dados.nos_gerados}</p>
+            <p>Utilização de memória: ${dados.utilizacao_memoria}</p>
+            <p>Profundidade da solução: ${dados.profundidade_solucao ?? 'Não encontrada'}</p>
+            <p>Profundidade máxima: ${dados.profundidade_maxima}</p>
+            <p>Admissibilidade: ${dados.admissibilidade ? 'Sim' : 'Não'}</p>
+            <p>Ótima: ${dados.otima ? 'Sim' : 'Não'}</p>
+            <p>Completa: ${dados.completa ? 'Sim' : 'Não'}</p>
+        </div>
+    `;
+
+    indiceMetodo++;
+    if (indiceMetodo < metodos.length) {
+        indiceEstado = 0;
+        caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
+        document.getElementById('movimentos-numero').textContent = '0'; // Zera para novo método
+        mostrarEstado();
+    } else {
+        proximoBtn.disabled = true;
+        proximoBtn.style.visibility = 'hidden';
     }
 }
