@@ -1,4 +1,4 @@
-let resultados = {};
+let resultados = {}; 
 let metodos = [];
 let indiceMetodo = 0;
 let indiceEstado = 0;
@@ -33,27 +33,23 @@ document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
 });
 
 function resetar() {
-    // Limpar o tabuleiro inicial
     document.querySelectorAll('#tabuleiro-inicial input').forEach(input => {
         input.value = '';
     });
 
-    // Desmarcar todos os algoritmos selecionados
     document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
         input.checked = false;
     });
 
-    // Limpar área de saída e resultados
     document.getElementById('saida').innerHTML = '';
     document.getElementById('resultados').innerHTML = '';
     document.getElementById('nome-solucao').textContent = '';
-
-    // Zerar contador de movimentos
     document.getElementById('movimentos-numero').textContent = '0';
 
-    // Esconder botão de próximo
     proximoBtn.style.visibility = 'hidden';
     proximoBtn.disabled = true;
+
+    mudarCorDeFundo(); // Voltar tudo para o normal
 }
 
 function enviarDados() {
@@ -111,6 +107,8 @@ function mostrarEstado() {
     saida.innerHTML = estado.map(valor => `
         <div>${valor === 0 ? '' : valor}</div>
     `).join('');
+
+    mudarCorDeFundo(metodo); // Mudar cores das laterais
 }
 
 function proximoEstado() {
@@ -147,14 +145,54 @@ function mostrarResultados() {
         </div>
     `;
 
+    if (!dados.profundidade_solucao) {
+        mudarCorDeFundo('sem_solucao');
+    }
+
     indiceMetodo++;
     if (indiceMetodo < metodos.length) {
         indiceEstado = 0;
         caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
-        document.getElementById('movimentos-numero').textContent = '0'; // Zera para novo método
+        document.getElementById('movimentos-numero').textContent = '0';
         mostrarEstado();
     } else {
         proximoBtn.disabled = true;
         proximoBtn.style.visibility = 'hidden';
+        mudarCorDeFundo(); // volta pro normal
+    }
+}
+
+function mudarCorDeFundo(algoritmo) {
+    const esquerda = document.getElementById('coluna-esquerda');
+    const direita = document.getElementById('coluna-direita');
+    const meio = document.getElementById('coluna-meio');
+
+    // Deixar o meio sempre branco
+    meio.style.backgroundColor = '#ffffff';
+
+    switch (algoritmo) {
+        case 'largura':
+            esquerda.style.backgroundColor = '#add8e6'; // Azul claro
+            direita.style.backgroundColor = '#add8e6';
+            break;
+        case 'profundidade':
+            esquerda.style.backgroundColor = '#90ee90'; // Verde claro
+            direita.style.backgroundColor = '#90ee90';
+            break;
+        case 'gulosa':
+            esquerda.style.backgroundColor = '#ffffcc'; // Amarelo claro
+            direita.style.backgroundColor = '#ffffcc';
+            break;
+        case 'aestrela':
+            esquerda.style.backgroundColor = '#dda0dd'; // Roxo claro
+            direita.style.backgroundColor = '#dda0dd';
+            break;
+        case 'sem_solucao':
+            esquerda.style.backgroundColor = '#ffcccb'; // Vermelho claro
+            direita.style.backgroundColor = '#ffcccb';
+            break;
+        default:
+            esquerda.style.backgroundColor = '#f0f0f0'; // Cinzinha padrão
+            direita.style.backgroundColor = '#f0f0f0';
     }
 }
