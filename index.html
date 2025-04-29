@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div class="entrada" id="coluna-esquerda">
-            <h2>Tabuleiro Inicial</h2>
+            <h2>1. Defina a entrada</h2>
             <div id="tabuleiro-inicial" class="tabuleiro">
                 <!-- 9 inputs -->
                 <input type="text" maxlength="1">
@@ -24,7 +24,7 @@
                 <input type="text" maxlength="1">
             </div>
 
-            <h2>Escolher Algoritmos</h2>
+            <h2>Escolha os algoritmos</h2>
             <div class="algoritmo-item">
                 <input type="checkbox" id="largura" name="algoritmo" value="largura">
                 <label for="largura">Busca em Largura</label>
@@ -39,7 +39,7 @@
             </div>
             <div class="algoritmo-item">
                 <input type="checkbox" id="aestrela" name="algoritmo" value="aestrela">
-                <label for="aestrela">A*</label>
+                <label for="aestrela">A estrela</label>
             </div>
             <div class="algoritmo-item">
                 <input type="checkbox" id="selecionar-todos">
@@ -49,18 +49,18 @@
               
 
             <div style="margin-top: 20px;">
-                <button id="resolver-btn" style="padding:10px 20px;margin-right:10px;">Resolver</button>
                 <button id="resetar-btn" style="padding:10px 20px;">Resetar</button>
+                <button id="resolver-btn" style="padding:10px 20px;margin-right:10px;">Resolver</button>
             </div>
             
         </div>
 
         <div class="solucao" id="coluna-meio">
-            <h2 id="nome-solucao">Solução</h2>
+            <h2 id="nome-solucao">2. Resolução</h2>
             <div id="saida" class="tabuleiro-solucao"></div>
 
             <div id="contador-movimentos" class="movimentos-box">
-                <h3>Quantidade de movimentos:</h3>
+                <h3>Contador de movimentos:</h3>
                 <p id="movimentos-numero">0</p>
             </div>
             
@@ -72,7 +72,7 @@
         </div>
 
         <div class="resultados" id="coluna-direita">
-            <h2>Resultados</h2>
+            <h2>3. Resultados</h2>
             <div id="resultados"></div>
         </div>
     </div>
