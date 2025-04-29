@@ -1,7 +1,6 @@
-# app.py
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-from caotica import busca_em_largura, busca_em_profundidade, a_estrela
+from caotica import busca_em_largura, busca_em_profundidade, busca_gulosa, a_estrela
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 CORS(app)
@@ -13,39 +12,38 @@ def index():
 @app.route('/resolver', methods=['POST'])
 def resolver():
     data = request.get_json()
+
+    if not data or 'tabuleiro' not in data or 'algoritmos' not in data:
+        return jsonify({'error': 'Dados inválidos: esperado "tabuleiro" e "algoritmos"'}), 400
+
     tabuleiro = list(map(int, data['tabuleiro']))
     algoritmos = data['algoritmos']
+
     resposta = {}
 
     for alg in algoritmos:
         if alg == 'largura':
             resultado = busca_em_largura(tabuleiro)
-            resposta['largura'] = resultado
         elif alg == 'profundidade':
             resultado = busca_em_profundidade(tabuleiro)
-            resposta['profundidade'] = resultado
-        elif alg == 'a_estrela':
+        elif alg == 'gulosa':
+            resultado = busca_gulosa(tabuleiro)
+        elif alg == 'aestrela':
             resultado = a_estrela(tabuleiro)
-            resposta['A*'] = resultado
+        else:
+            resultado = {
+                'utilizacao_memoria': 0,
+                'nos_gerados': 0,
+                'profundidade_solucao': None,
+                'profundidade_maxima': 0,
+                'admissibilidade': False,
+                'otima': False,
+                'completa': False,
+                'caminho': []
+            }
+        resposta[alg] = resultado
 
-    return jsonify({
-        'resposta': resposta  
-    })
-
-
-def formatar_resultado(resposta):
-    linhas = []
-    for metodo, dados in resposta.items():
-        linhas.append(f"\n=== Método: {metodo.upper()} ===")
-        
-        if 'solucao' in dados:
-            linhas.append(f"Solução: {dados['solucao']}")
-        
-        for chave, valor in dados.items():
-            if chave != 'solucao':
-                linhas.append(f"{chave}: {valor}")
-    
-    return "\n".join(linhas)
+    return jsonify(resposta)
 
 
 if __name__ == '__main__':

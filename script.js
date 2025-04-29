@@ -1,83 +1,233 @@
-async function resolver() {
-    const inputs = document.querySelectorAll('#tabuleiro input');
-    const values = Array.from(inputs).map(input => input.value === '' ? '0' : input.value);
+let resultados = {}; 
+let metodos = [];
+let indiceMetodo = 0;
+let indiceEstado = 0;
+let caminhoAtual = [];
 
-    const numeros = new Set(values);
-    const esperado = new Set(['0','1','2','3','4','5','6','7','8']);
-    if (numeros.size !== 9 || ![...esperado].every(n => numeros.has(n))) {
-        alert('Por favor, insira todos os números de 0 a 8 (sem repetir).');
-        return;
-    }
+let animationIntervalId = null;
 
-    const algoritmosSelecionados = Array.from(document.querySelectorAll('.algoritmos input:checked')).map(cb => cb.value);
+const proximoBtn = document.getElementById('proximo-btn');
+proximoBtn.disabled = true;
 
-    if (algoritmosSelecionados.length === 0) {
-        alert('Por favor, selecione ao menos um método de resolução.');
-        return;
-    }
+document.getElementById('resolver-btn').addEventListener('click', enviarDados);
+proximoBtn.removeEventListener('click', proximoEstado);
+proximoBtn.addEventListener('click', skipAnimation);
+document.getElementById('resetar-btn').addEventListener('click', resetar);
 
-    const resposta = document.getElementById('resultado');
-    resposta.textContent = 'Resolvendo...';
+// Função para lidar com "Selecionar Todos"
+document.getElementById('selecionar-todos').addEventListener('change', function () {
+    const todos = this.checked;
+    document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
+        if (input.id !== 'selecionar-todos') {
+            input.checked = todos;
+        }
+    });
+});
 
-    try {
-        const response = await fetch('/resolver', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tabuleiro: values,
-                algoritmos: algoritmosSelecionados
-            })
+// Se clicar em qualquer outro checkbox, desmarca "Selecionar Todos"
+document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
+    if (input.id !== 'selecionar-todos') {
+        input.addEventListener('change', function () {
+            if (!this.checked) {
+                document.getElementById('selecionar-todos').checked = false;
+            }
         });
+    }
+});
 
-        const resultado = await response.json();
-        const respostaServidor = resultado.resposta;
+function resetar() {
+    document.querySelectorAll('#tabuleiro-inicial input').forEach(input => {
+        input.value = '';
+    });
 
-        const metodo = Object.keys(respostaServidor)[0];
-        const solucao = respostaServidor[metodo].solucao;
+    document.querySelectorAll('input[name="algoritmo"]').forEach(input => {
+        input.checked = false;
+    });
 
-        if (solucao && solucao.length > 0) {
-            animarSolucao(solucao);
+    document.getElementById('saida').innerHTML = '';
+    document.getElementById('resultados').innerHTML = '';
+    document.getElementById('nome-solucao').textContent = '';
+    document.getElementById('movimentos-numero').textContent = '0';
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+    proximoBtn.style.visibility = 'hidden';
+    proximoBtn.disabled = true;
 
-            resposta.innerHTML = `
-                <b>Método:</b> ${metodo.toUpperCase()}<br>
-                <b>Nós gerados:</b> ${respostaServidor[metodo].nos_gerados}<br>
-                <b>Nós em fronteira:</b> ${respostaServidor[metodo].nos_fronteira}<br>
-                <b>Profundidade da solução:</b> ${respostaServidor[metodo].profundidade_solucao}<br>
-                <b>Profundidade máxima:</b> ${respostaServidor[metodo].profundidade_max}<br>
-                <b>Completo:</b> ${respostaServidor[metodo].completo}<br>
-                <b>Ótimo:</b> ${respostaServidor[metodo].otimo}<br>
-                <b>Admissível:</b> ${respostaServidor[metodo].admissivel}<br>
-            `;
-        } else {
-            resposta.textContent = 'Não foi encontrada solução.';
-        }
+    mudarCorDeFundo(); // Voltar tudo para o normal
+}
 
-    } catch (error) {
-        resposta.textContent = 'Erro ao resolver o jogo.';
-        console.error(error);
+function enviarDados() {
+    document.getElementById('resultados').innerHTML = '';
+    document.getElementById('movimentos-numero').textContent = '0';
+
+    const tabuleiro = [];
+    document.querySelectorAll('#tabuleiro-inicial input').forEach(input => {
+        const valor = input.value.trim();
+        tabuleiro.push(valor === '' ? 0 : parseInt(valor));
+    });
+
+    const algoritmos = [];
+    document.querySelectorAll('input[name="algoritmo"]:checked').forEach(input => {
+        algoritmos.push(input.value);
+    });
+
+    if (tabuleiro.length !== 9 || algoritmos.length === 0) {
+        alert("Preencha corretamente o tabuleiro e selecione pelo menos um algoritmo!");
+        return;
+    }
+
+    fetch('/resolver', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ tabuleiro, algoritmos })
+    })
+    .then(response => response.json())
+    .then(data => {
+        resultados = data;
+        metodos = Object.keys(resultados);
+        indiceMetodo = 0;
+        indiceEstado = 0;
+        caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
+
+        document.getElementById('saida').innerHTML = '';
+        document.getElementById('nome-solucao').textContent = '';
+        
+        iniciarAnimacao();
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
+}
+
+function mostrarEstado() {
+    const metodo = metodos[indiceMetodo];
+    const estado = caminhoAtual[indiceEstado];
+
+    document.getElementById('nome-solucao').textContent = `Método: ${metodo.toUpperCase()}`;
+
+    const saida = document.getElementById('saida');
+    saida.innerHTML = estado.map(valor => `
+        <div>${valor === 0 ? '' : valor}</div>
+    `).join('');
+
+    mudarCorDeFundo(metodo); // Mudar cores das laterais
+}
+
+function proximoEstado() {
+    indiceEstado++;
+    if (indiceEstado < caminhoAtual.length) {
+        mostrarEstado();
+        atualizarContador();
+    } else {
+        mostrarResultados();
     }
 }
 
-function atualizarTabuleiro(estado) {
-    const inputs = document.querySelectorAll('#tabuleiro input');
-    for (let i = 0; i < estado.length; i++) {
-        inputs[i].value = estado[i] === 0 ? '' : estado[i];
+function atualizarContador() {
+    let movimentos = parseInt(document.getElementById('movimentos-numero').textContent);
+    movimentos++;
+    document.getElementById('movimentos-numero').textContent = movimentos;
+}
+
+function mostrarResultados() {
+    const metodo = metodos[indiceMetodo];
+    const dados = resultados[metodo];
+
+    const resultadosDiv = document.getElementById('resultados');
+    resultadosDiv.innerHTML += `
+        <div class="movimento">
+            <h3>Resultados para ${metodo.toUpperCase()}:</h3>
+            <p>Nós gerados: ${dados.nos_gerados}</p>
+            <p>Utilização de memória: ${dados.utilizacao_memoria}</p>
+            <p>Profundidade da solução: ${dados.profundidade_solucao ?? 'Não encontrada'}</p>
+            <p>Profundidade máxima: ${dados.profundidade_maxima}</p>
+            <p>Admissibilidade: ${dados.admissibilidade ? 'Sim' : 'Não'}</p>
+            <p>Ótima: ${dados.otima ? 'Sim' : 'Não'}</p>
+            <p>Completa: ${dados.completa ? 'Sim' : 'Não'}</p>
+        </div>
+    `;
+
+    if (!dados.profundidade_solucao) {
+        mudarCorDeFundo('sem_solucao');
+    }
+
+    indiceMetodo++;
+    if (indiceMetodo < metodos.length) {
+        indiceEstado = 0;
+        caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
+        document.getElementById('movimentos-numero').textContent = '0';
+        iniciarAnimacao(); // ← inicia a animação do próximo
+    } else {
+        proximoBtn.disabled = true;
+        proximoBtn.style.visibility = 'hidden';
+        mudarCorDeFundo(); // volta pro normal
     }
 }
 
-function animarSolucao(solucoes) {
+function mudarCorDeFundo(algoritmo) {
+    const esquerda = document.getElementById('coluna-esquerda');
+    const direita = document.getElementById('coluna-direita');
+    const meio = document.getElementById('coluna-meio');
+
+    // Deixar o meio sempre branco
+    meio.style.backgroundColor = '#ffffff';
+
+    switch (algoritmo) {
+        case 'largura':
+            esquerda.style.backgroundColor = '#add8e6'; // Azul claro
+            direita.style.backgroundColor = '#add8e6';
+            break;
+        case 'profundidade':
+            esquerda.style.backgroundColor = '#90ee90'; // Verde claro
+            direita.style.backgroundColor = '#90ee90';
+            break;
+        case 'gulosa':
+            esquerda.style.backgroundColor = '#ffffcc'; // Amarelo claro
+            direita.style.backgroundColor = '#ffffcc';
+            break;
+        case 'aestrela':
+            esquerda.style.backgroundColor = '#dda0dd'; // Roxo claro
+            direita.style.backgroundColor = '#dda0dd';
+            break;
+        case 'sem_solucao':
+            esquerda.style.backgroundColor = '#ffcccb'; // Vermelho claro
+            direita.style.backgroundColor = '#ffcccb';
+            break;
+        default:
+            esquerda.style.backgroundColor = '#f0f0f0'; // Cinzinha padrão
+            direita.style.backgroundColor = '#f0f0f0';
+    }
+}
+
+function iniciarAnimacao() {
+    if (animationIntervalId) clearInterval(animationIntervalId);
+    const metodo = metodos[indiceMetodo];
+    const estados = resultados[metodo].solucao;
     let i = 0;
-    const intervalo = setInterval(() => {
-        if (i < solucoes.length) {
-            const estadoAtual = Array.from(solucoes[i]);
-            atualizarTabuleiro(estadoAtual);
-            i++;
+
+    document.getElementById('movimentos-numero').textContent = '0';
+    document.getElementById('nome-solucao').textContent = `Método: ${metodo.toUpperCase()}`;
+    mudarCorDeFundo(metodo);
+    document.getElementById('saida').innerHTML = '';
+
+    animationIntervalId = setInterval(() => {
+        if (i < estados.length) {
+            const estado = estados[i++];
+            document.getElementById('saida').innerHTML = estado
+                .map(v => `<div>${v === 0 ? '' : v}</div>`)
+                .join('');
+            document.getElementById('movimentos-numero').textContent = (i - 1).toString();
         } else {
-            clearInterval(intervalo);
+            clearInterval(animationIntervalId);
+            animationIntervalId = null;
+            mostrarResultados();
         }
-    }, 800);
+    }, 500);
+}
+
+function skipAnimation() {
+    if (animationIntervalId) {
+        clearInterval(animationIntervalId);
+        animationIntervalId = null;
+    }
+    mostrarResultados();
 }

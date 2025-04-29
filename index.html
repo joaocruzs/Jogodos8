@@ -3,35 +3,77 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo dos 8</title>
+    <title>8-Puzzle Solver</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="8.png">
+    
 </head>
 <body>
     <div class="container">
-        <h1>Jogo dos 8</h1>
+        <div class="entrada" id="coluna-esquerda">
+            <h2>Tabuleiro Inicial</h2>
+            <div id="tabuleiro-inicial" class="tabuleiro">
+                <!-- 9 inputs -->
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+                <input type="text" maxlength="1">
+            </div>
 
-        <div class="grid" id="tabuleiro">
-            <!-- 9 inputs para o tabuleiro -->
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
-            <input type="text" maxlength="1">
+            <h2>Escolher Algoritmos</h2>
+            <div class="algoritmo-item">
+                <input type="checkbox" id="largura" name="algoritmo" value="largura">
+                <label for="largura">Busca em Largura</label>
+            </div>
+            <div class="algoritmo-item">
+                <input type="checkbox" id="profundidade" name="algoritmo" value="profundidade">
+                <label for="profundidade">Busca em Profundidade</label>
+            </div>
+            <div class="algoritmo-item">
+                <input type="checkbox" id="gulosa" name="algoritmo" value="gulosa">
+                <label for="gulosa">Busca Gulosa</label>
+            </div>
+            <div class="algoritmo-item">
+                <input type="checkbox" id="aestrela" name="algoritmo" value="aestrela">
+                <label for="aestrela">A*</label>
+            </div>
+            <div class="algoritmo-item">
+                <input type="checkbox" id="selecionar-todos">
+                <label for="selecionar-todos">Selecionar Todos</label>
+            </div>
+            
+              
+
+            <div style="margin-top: 20px;">
+                <button id="resolver-btn" style="padding:10px 20px;margin-right:10px;">Resolver</button>
+                <button id="resetar-btn" style="padding:10px 20px;">Resetar</button>
+            </div>
+            
         </div>
 
-        <div class="algoritmos">
-            <label><input type="checkbox" value="largura"> Busca em Largura</label>
-            <label><input type="checkbox" value="profundidade"> Busca em Profundidade</label>
-            <label><input type="checkbox" value="a_estrela"> A*</label>
+        <div class="solucao" id="coluna-meio">
+            <h2 id="nome-solucao">Solução</h2>
+            <div id="saida" class="tabuleiro-solucao"></div>
+
+            <div id="contador-movimentos" class="movimentos-box">
+                <h3>Quantidade de movimentos:</h3>
+                <p id="movimentos-numero">0</p>
+            </div>
+            
+            <div class="botoes">
+                <button id="proximo-btn">Prosseguir</button>
+            </div>
         </div>
 
-        <button onclick="resolver()">Resolver</button>
-        <div id="resultado"></div>
+        <div class="resultados" id="coluna-direita">
+            <h2>Resultados</h2>
+            <div id="resultados"></div>
+        </div>
     </div>
 
     <script src="script.js"></script>
