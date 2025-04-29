@@ -27,13 +27,10 @@ body {
 }
 
 .resultados {
-    background-image: url('8.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: rgba(255, 255, 255, 0.8); /* leve camada branca para contraste */
-    position: relative;
-    z-index: 0;
+  /* remover imagem de fundo */
+  background-image: none;
+  /* manter apenas um fundo cinza claro */
+  background-color: #f0f0f0;
 }
 
 .blocos{
@@ -67,14 +64,9 @@ body {
 }
 
 .tabuleiro-solucao div {
-  width: 50px;
-  height: 50px;
-  background-color: #e0e0e0;
-  border: 1px solid #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
+  background-color: #007bff;
+  border-color:   #0056b3;
+  color:          white;
 }
 
 .tabuleiro-solucao {
@@ -91,8 +83,8 @@ body {
   position: absolute;
   width: 45px;
   height: 45px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #007bff;
+  color:            white;
   font-weight: bold;
   font-size: 20px;
   display: flex;
@@ -184,14 +176,9 @@ button:disabled {
 }
 
 #saida div {
-  width: 50px;
-  height: 50px;
-  background-color: #e0e0e0;
-  border: 1px solid #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
+  background-color: #007bff;
+  border:           1px solid #0056b3;
+  color:            white;
 }
 
 #resultados .movimento {
