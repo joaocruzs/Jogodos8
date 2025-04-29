@@ -66,16 +66,23 @@ body {
   font-size: 24px;
 }
 
-/* Botões */
-.botoes {
-  margin-top: 20px;
-  text-align: center;
+/* Botões principais com bordas arredondadas e cor rosa claro */
+#resolver-btn,
+#resetar-btn,
+#proximo-btn {
+  background-color: #007bff;  /* rosa claro */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;         /* mantém espaçamento */
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+#resolver-btn:hover,
+#resetar-btn:hover,
+#proximo-btn:hover {
+  background-color: #007bff;  /* rosa um pouco mais escuro no hover */
 }
 
 /* Efeito para mudança de fundo */
@@ -100,8 +107,8 @@ button {
 
 /* Movimentos (contador) */
 .movimentos-box {
-  margin-top: 20px;
-  padding: 10px;
+  margin-top: 80px;              /* distancia do tabuleiro */
+  padding: 20px 10px 30px;       /* ↑20px em cima, 10px nas laterais, 30px embaixo */
   background-color: #f0f0f0;
   border-radius: 8px;
   text-align: center;
@@ -115,7 +122,37 @@ button {
 }
 
 #movimentos-numero {
+  display: block;
+  margin-top: 10px;
   font-size: 24px;
   font-weight: bold;
   color: #007bff;
+}
+
+/* Adicione ao final do arquivo */
+#saida {
+  position: relative;
+  width: 165px;   /* 3×50px + 2×5px gap */
+  height: 165px;
+  margin: 0 auto;
+  background: none;  /* remove o grid estático */
+}
+
+.tile {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  transition: transform 0.3s ease;
+}
+
+/* Centraliza o botão “Prosseguir” */
+#proximo-btn {
+  display: block;
+  margin: 20px auto;   /* 20px em cima/baixo, auto nas laterais */
 }

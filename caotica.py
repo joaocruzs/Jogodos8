@@ -52,8 +52,8 @@ def busca_em_largura(estado_inicial):
                 "profundidade_solucao": profundidade,
                 "profundidade_maxima": profundidade_maxima,
                 "admissibilidade": True,
-                "otima": True,
-                "completa": True
+                # "otima": True,
+                # "completa": True
             }
 
         visitados.add(estado)

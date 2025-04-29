@@ -141,8 +141,6 @@ function mostrarResultados() {
             <p>Profundidade da solução: ${dados.profundidade_solucao ?? 'Não encontrada'}</p>
             <p>Profundidade máxima: ${dados.profundidade_maxima}</p>
             <p>Admissibilidade: ${dados.admissibilidade ? 'Sim' : 'Não'}</p>
-            <p>Ótima: ${dados.otima ? 'Sim' : 'Não'}</p>
-            <p>Completa: ${dados.completa ? 'Sim' : 'Não'}</p>
         </div>
     `;
 
@@ -150,12 +148,11 @@ function mostrarResultados() {
         mudarCorDeFundo('sem_solucao');
     }
 
-    // Agora só exibe o botão, sem avançar automaticamente
     proximoBtn.disabled = false;
     proximoBtn.style.visibility = 'visible';
 }
 
-// Remove listener antigo e adiciona lógica de avanço de algoritmo
+// --- Listener do botão “Prosseguir” ---
 proximoBtn.removeEventListener('click', skipAnimation);
 proximoBtn.addEventListener('click', () => {
     proximoBtn.disabled = true;
@@ -167,10 +164,11 @@ proximoBtn.addEventListener('click', () => {
         caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
         document.getElementById('movimentos-numero').textContent = '0';
         document.getElementById('nome-solucao').textContent = '';
-        document.getElementById('saida').innerHTML = '';
+
+        // Força recriar os tiles antes de animar
+        tilesInitialized = false;
         iniciarAnimacao();
     } else {
-        // terminou todos os algoritmos
         mudarCorDeFundo();
     }
 });
@@ -210,8 +208,36 @@ function mudarCorDeFundo(algoritmo) {
     }
 }
 
+const tileMap = {};
+let tilesInitialized = false;
+
+function initTiles() {
+  const container = document.getElementById('saida');
+  container.innerHTML = '';
+  for (let v = 1; v <= 8; v++) {
+    const div = document.createElement('div');
+    div.className = 'tile';
+    div.textContent = v;
+    div.style.transform = 'translate(0,0)';
+    container.appendChild(div);
+    tileMap[v] = div;
+  }
+  tilesInitialized = true;
+}
+
+function updateTiles(estado) {
+  estado.forEach((v, idx) => {
+    if (v === 0) return;
+    const row = Math.floor(idx / 3), col = idx % 3;
+    const offset = 50 + 5;            // tile 50px + gap 5px
+    const x = col * offset, y = row * offset;
+    tileMap[v].style.transform = `translate(${x}px, ${y}px)`;
+  });
+}
+
 function iniciarAnimacao() {
     if (animationIntervalId) clearInterval(animationIntervalId);
+
     const metodo = metodos[indiceMetodo];
     const estados = resultados[metodo].solucao;
     let i = 0;
@@ -219,15 +245,18 @@ function iniciarAnimacao() {
     document.getElementById('movimentos-numero').textContent = '0';
     document.getElementById('nome-solucao').textContent = `Método: ${metodo.toUpperCase()}`;
     mudarCorDeFundo(metodo);
-    document.getElementById('saida').innerHTML = '';
+
+    // Recria sempre os tiles para cada algoritmo
+    initTiles();
+
+    // Posiciona estado inicial
+    updateTiles(estados[0]);
 
     animationIntervalId = setInterval(() => {
+        i++;
         if (i < estados.length) {
-            const estado = estados[i++];
-            document.getElementById('saida').innerHTML = estado
-                .map(v => `<div>${v === 0 ? '' : v}</div>`)
-                .join('');
-            document.getElementById('movimentos-numero').textContent = (i - 1).toString();
+            updateTiles(estados[i]);
+            document.getElementById('movimentos-numero').textContent = i.toString();
         } else {
             clearInterval(animationIntervalId);
             animationIntervalId = null;
