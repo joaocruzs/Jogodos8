@@ -36,8 +36,6 @@ def resolver():
                 'profundidade_solucao': None,
                 'profundidade_maxima': 0,
                 'admissibilidade': False,
-                'otima': False,
-                'completa': False,
                 'caminho': []
             }
         resposta[alg] = resultado
