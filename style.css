@@ -1,73 +1,212 @@
-/* styles.css */
+/* RESET BÁSICO */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  font-family: calibri, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
 }
 
 .container {
-    background: white;
-    padding: 20px 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
+  display: flex;
+  height: 100vh;
 }
 
-h1 {
-    margin-bottom: 20px;
+.entrada, .solucao, .resultados {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  transition: background-color 0.5s;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 60px);
-    grid-gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
+.entrada {
+  background-color: #ececec;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.grid input {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-    text-align: center;
-    border: 2px solid #ccc;
-    border-radius: 8px;
+.solucao {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
 }
 
-.algoritmos {
-    margin-bottom: 20px;
-    text-align: left;
+.resultados {
+  background-color: #ececec;
 }
 
-.algoritmos label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
+/* TABULEIROS */
+.tabuleiro {
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  margin-bottom: 20px;
+}
+
+.tabuleiro input {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.tabuleiro-solucao {
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.tabuleiro-solucao div {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.tabuleiro-solucao {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  background-color: #fff;
+}
+
+.tabuleiro-solucao .tile {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  transition: top 0.3s ease, left 0.3s ease;
+}
+
+/* BOTÕES */
+.botoes {
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s;
 }
 
-button:hover {
-    background-color: #0056b3;
+button:hover:not(:disabled) {
+  background-color: #0056b3;
 }
 
-#resultado {
-    margin-top: 20px;
-    font-size: 14px;
-    text-align: left;
-    white-space: pre-wrap;
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.mudando {
+  background-color: yellow !important;
+  transition: background-color 0.5s;
+}
+
+/* ALGORITMOS */
+.algoritmos-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.algoritmos-opcoes label {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* MOVIMENTOS */
+.movimentos-box {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.movimentos-box h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+#movimentos-numero {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* FINAL*/
+#saida {
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#saida div {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+#resultados .movimento {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: white;
+  border-left: 5px solid #007bff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('8.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+  z-index: -1;
 }
