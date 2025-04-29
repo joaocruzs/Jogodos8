@@ -213,9 +213,6 @@ function mostrarResultados() {
             <p>Utilização de memória: ${dados.utilizacao_memoria}</p>
             <p>Profundidade da solução: ${dados.profundidade_solucao ?? 'Não encontrada'}</p>
             <p>Profundidade máxima: ${dados.profundidade_maxima}</p>
-            <p>Admissibilidade: ${dados.admissibilidade ? 'Sim' : 'Não'}</p>
-            <p>Ótima: ${dados.otima ? 'Sim' : 'Não'}</p>
-            <p>Completa: ${dados.completa ? 'Sim' : 'Não'}</p>
         </div>
     `;
 
