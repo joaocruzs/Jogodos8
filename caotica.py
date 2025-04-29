@@ -2,7 +2,7 @@ from collections import deque
 import heapq
 
 objetivo = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-LIMITE_PROFUNDIDADE = 30
+LIMITE_PROFUNDIDADE = 60
 
 def movimentos_possiveis(pos):
     return {
