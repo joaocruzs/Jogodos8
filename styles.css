@@ -156,3 +156,11 @@ body {
   display: block;
   margin: 20px auto;   /* 20px em cima/baixo, auto nas laterais */
 }
+
+/* Destaque em azul usando outline (não afeta o layout nem é cortado) */
+#tabuleiro-inicial input:focus {
+  outline: 2px solid #007bff;
+  outline-offset: -2px;
+  /* opcional: mantém sombra suave sem esconder a outline */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}

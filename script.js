@@ -219,6 +219,8 @@ function initTiles() {
     div.className = 'tile';
     div.textContent = v;
     div.style.transform = 'translate(0,0)';
+    div.tabIndex = 0;                    // torna o div focusável
+    div.setAttribute('aria-label', `Peça ${v}`);
     container.appendChild(div);
     tileMap[v] = div;
   }
