@@ -123,16 +123,35 @@ function enviarDados() {
 function mostrarEstado() {
     const metodo = metodos[indiceMetodo];
     const estado = caminhoAtual[indiceEstado];
-
-    document.getElementById('nome-solucao').textContent = `Método: ${metodo.toUpperCase()}`;
-
     const saida = document.getElementById('saida');
-    saida.innerHTML = estado.map(valor => `
-        <div>${valor === 0 ? '' : valor}</div>
-    `).join('');
+    
+    document.getElementById('nome-solucao').textContent = `Método: ${metodo.toUpperCase()}`;
+    
+    // Se for a primeira vez, criar os tiles
+    if (!saida.hasChildNodes()) {
+        estado.forEach((valor, i) => {
+            if (valor === 0) return; // Não mostrar tile do vazio
+            const div = document.createElement('div');
+            div.className = 'tile';
+            div.id = `tile-${valor}`;
+            div.textContent = valor;
+            saida.appendChild(div);
+        });
+    }
+
+    estado.forEach((valor, i) => {
+        const x = i % 3;
+        const y = Math.floor(i / 3);
+        if (valor === 0) return;
+
+        const tile = document.getElementById(`tile-${valor}`);
+        tile.style.left = `${x * 50}px`;
+        tile.style.top = `${y * 50}px`;
+    });
 
     mudarCorDeFundo(metodo);
 }
+
 
 function toggleAnimacao() {
     if (animando) {
