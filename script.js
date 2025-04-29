@@ -150,18 +150,30 @@ function mostrarResultados() {
         mudarCorDeFundo('sem_solucao');
     }
 
+    // Agora só exibe o botão, sem avançar automaticamente
+    proximoBtn.disabled = false;
+    proximoBtn.style.visibility = 'visible';
+}
+
+// Remove listener antigo e adiciona lógica de avanço de algoritmo
+proximoBtn.removeEventListener('click', skipAnimation);
+proximoBtn.addEventListener('click', () => {
+    proximoBtn.disabled = true;
+    proximoBtn.style.visibility = 'hidden';
+
     indiceMetodo++;
     if (indiceMetodo < metodos.length) {
         indiceEstado = 0;
         caminhoAtual = resultados[metodos[indiceMetodo]].solucao;
         document.getElementById('movimentos-numero').textContent = '0';
-        iniciarAnimacao(); // ← inicia a animação do próximo
+        document.getElementById('nome-solucao').textContent = '';
+        document.getElementById('saida').innerHTML = '';
+        iniciarAnimacao();
     } else {
-        proximoBtn.disabled = true;
-        proximoBtn.style.visibility = 'hidden';
-        mudarCorDeFundo(); // volta pro normal
+        // terminou todos os algoritmos
+        mudarCorDeFundo();
     }
-}
+});
 
 function mudarCorDeFundo(algoritmo) {
     const esquerda = document.getElementById('coluna-esquerda');
