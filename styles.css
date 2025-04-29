@@ -27,7 +27,13 @@ body {
 }
 
 .resultados {
-  background-color: #ececec;
+    background-image: url('8.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(255, 255, 255, 0.8); /* leve camada branca para contraste */
+    position: relative;
+    z-index: 0;
 }
 
 .blocos{
@@ -197,19 +203,19 @@ button:disabled {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.background-image {
+/*.background-image {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('8.png');
+  background-image: url('icon.png');
   background-size: cover;
   background-position: center;
   opacity: 0.5;
   z-index: -1;
 }
-
+*/
 .letter{
   font-size: 20px;
   font-weight: bold;
