@@ -50,10 +50,7 @@ def busca_em_largura(estado_inicial):
                 "utilizacao_memoria": len(fila),
                 "nos_gerados": nos_gerados,
                 "profundidade_solucao": profundidade,
-                "profundidade_maxima": profundidade_maxima,
-                "admissibilidade": True,
-                "otima": True,
-                "completa": True
+                "profundidade_maxima": profundidade_maxima
             }
 
         visitados.add(estado)
@@ -64,7 +61,7 @@ def busca_em_largura(estado_inicial):
                 nos_gerados += 1
 
     return {"solucao": [], "utilizacao_memoria": 0, "nos_gerados": nos_gerados, "profundidade_solucao": None,
-            "profundidade_maxima": profundidade_maxima, "admissibilidade": True, "otima": False, "completa": False}
+            "profundidade_maxima": profundidade_maxima}
 
 # Busca em Profundidade Limitada
 def busca_em_profundidade(estado_inicial):
@@ -89,10 +86,7 @@ def busca_em_profundidade(estado_inicial):
                 "utilizacao_memoria": len(pilha),
                 "nos_gerados": nos_gerados,
                 "profundidade_solucao": profundidade,
-                "profundidade_maxima": profundidade_maxima,
-                "admissibilidade": False,
-                "otima": False,
-                "completa": False
+                "profundidade_maxima": profundidade_maxima
             }
 
         visitados.add(estado)
@@ -103,7 +97,7 @@ def busca_em_profundidade(estado_inicial):
                 nos_gerados += 1
 
     return {"solucao": [], "utilizacao_memoria": 0, "nos_gerados": nos_gerados, "profundidade_solucao": None,
-            "profundidade_maxima": profundidade_maxima, "admissibilidade": False, "otima": False, "completa": False}
+            "profundidade_maxima": profundidade_maxima}
 
 # Busca Gulosa
 def busca_gulosa(estado_inicial):
@@ -125,10 +119,7 @@ def busca_gulosa(estado_inicial):
                 "utilizacao_memoria": len(fila),
                 "nos_gerados": nos_gerados,
                 "profundidade_solucao": profundidade,
-                "profundidade_maxima": profundidade_maxima,
-                "admissibilidade": False,
-                "otima": False,
-                "completa": False
+                "profundidade_maxima": profundidade_maxima
             }
 
         visitados.add(estado)
@@ -139,7 +130,7 @@ def busca_gulosa(estado_inicial):
                 nos_gerados += 1
 
     return {"solucao": [], "utilizacao_memoria": 0, "nos_gerados": nos_gerados, "profundidade_solucao": None,
-            "profundidade_maxima": profundidade_maxima, "admissibilidade": False, "otima": False, "completa": False}
+            "profundidade_maxima": profundidade_maxima}
 
 # Busca A*
 def a_estrela(estado_inicial):
@@ -161,10 +152,7 @@ def a_estrela(estado_inicial):
                 "utilizacao_memoria": len(fila),
                 "nos_gerados": nos_gerados,
                 "profundidade_solucao": profundidade,
-                "profundidade_maxima": profundidade_maxima,
-                "admissibilidade": True,
-                "otima": True,
-                "completa": True
+                "profundidade_maxima": profundidade_maxima
             }
 
         if estado in visitados:
@@ -179,4 +167,4 @@ def a_estrela(estado_inicial):
                 nos_gerados += 1
 
     return {"solucao": [], "utilizacao_memoria": 0, "nos_gerados": nos_gerados, "profundidade_solucao": None,
-            "profundidade_maxima": profundidade_maxima, "admissibilidade": True, "otima": False, "completa": False}
+            "profundidade_maxima": profundidade_maxima}
