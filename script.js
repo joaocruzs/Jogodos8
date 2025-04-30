@@ -239,6 +239,7 @@ function proximoMetodo() {
     }
 }
 
+//mudar as cores
 function mudarCorDeFundo(algoritmo) {
     const esquerda = document.getElementById('coluna-esquerda');
     const direita = document.getElementById('coluna-direita');
