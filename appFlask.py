@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-from caotica import busca_em_largura, busca_em_profundidade, busca_gulosa, a_estrela
+from algoritmos import busca_em_largura, busca_em_profundidade, busca_gulosa, a_estrela
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 CORS(app)
