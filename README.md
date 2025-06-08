@@ -4,11 +4,6 @@
 
 Este projeto implementa o **Jogo dos 8** utilizando os algoritmos de **Busca em Largura**, **Busca em Profundidade**, **Busca Gulosa** e **A\*** para encontrar a solução.
 
-Você pode executar o projeto de duas formas:
-
-* **Via Flask**: uma apresentação mais elaborada com interface em **HTML + CSS + JS**.
-* **Via Tkinter**: uma visualização mais rápida e simplificada em interface gráfica nativa.
-
 ---
 
 ### 1. Interface Web
@@ -34,11 +29,3 @@ A comunicação entre a interface web e os algoritmos foi feita com a biblioteca
 Os algoritmos de busca estão definidos em:
 
 * `algoritmos.py`
-
----
-
-### 4. Interface Alternativa
-
-Uma visualização alternativa da interface foi feita com **Tkinter**:
-
-* `appTkinter.py`
